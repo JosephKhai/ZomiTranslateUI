@@ -1,0 +1,136 @@
+<div class="outer-wrapper" style="overflow-x: hidden;">
+  <div class="main-container" style="overflow-x: hidden;">
+    
+    <!-- Header -->
+    <div class="header-best">
+      <div class="left">
+        <button class="btn btn-light btn-circle" title="Menu">
+          <span class="material-icons">menu</span>
+        </button>
+        <img src="assets/zomi-logo.png" alt="Zomi" class="zomi-logo" />
+        <span class="zomi-title" style="font-family: 'Google Sans', 'Roboto', 'Arial', sans-serif; font-weight: 700; letter-spacing: 0.5px; text-transform: none; font-style: normal;">Zomi Translate</span>
+      </div>
+      <div class="right">
+        <button class="btn btn-outline-secondary" [ngClass]="{ 'register-btn-hover': registerBtnHover }"
+          (mouseenter)="registerBtnHover = true" (mouseleave)="registerBtnHover = false">
+          <span class="material-icons">person_add</span> Register
+        </button>
+        <button class="btn btn-secondary text-white" [ngClass]="{ 'signin-btn-hover': signinBtnHover }"
+          (mouseenter)="signinBtnHover = true" (mouseleave)="signinBtnHover = false">
+          <span class="material-icons">login</span> Sign In
+        </button>
+        <button class="btn btn-light btn-circle" title="Settings">
+          <span class="material-icons">settings</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Language selectors and swap -->
+      <div class="d-flex align-items-center justify-content-center mb-4 flex-wrap mx-auto"
+        style="width: 100%; max-width: 100%;">
+        <ul class="nav nav-tabs flex-grow-1 flex-wrap rounded-pill overflow-auto justify-content-start nav-bg nav-left">
+          <li class="nav-item" *ngFor="let lang of sourceLangs">
+            <a class="nav-link px-3 py-2 fw-semibold text-start lang-link" [class.active]="sourceLang === lang.code"
+              href="#" (click)="$event.preventDefault(); selectSourceLang(lang.code)"
+              style="min-width: 100px; font-size: 1.22rem;">
+              {{lang.name}}
+            </a>
+          </li>
+        </ul>
+
+        <button class="btn btn-light mx-3 rounded-circle shadow-sm border-0 swap-btn" (click)="swapLanguages()"
+          title="Swap" aria-label="Swap languages">
+          <span class="swap-bubble" [class.swap-animate]="swapAnimating" (animationend)="swapAnimating = false">
+            <span class="material-icons swap-icon">&#8646;</span>
+          </span>
+        </button>
+
+
+        <ul class="nav nav-tabs flex-grow-1 flex-wrap justify-content-end rounded-pill overflow-auto nav-bg nav-right">
+          <li class="nav-item" *ngFor="let lang of targetLangs">
+            <a class="nav-link px-3 py-2 fw-semibold text-start lang-link" [class.active]="targetLang === lang.code"
+              href="#" (click)="$event.preventDefault(); selectTargetLang(lang.code)"
+              style="min-width: 100px; font-size: 1.22rem;">
+              {{lang.name}}
+            </a>
+          </li>
+        </ul>
+
+      </div>
+
+      <!-- Panels -->
+      <div class="row g-3 justify-content-center mx-auto"
+        style="width: 100%; max-width: 100%; margin-left: 0; margin-right: 0; display: flex; flex-direction: row; align-items: stretch; overflow-x: hidden; box-sizing: border-box; padding: 0 2vw; gap: 2vw;">
+        <div class="col-12 col-md-6 d-flex justify-content-center"
+          style="flex: 1 1 0; min-width: 0; max-width: 600px; width: 0; padding: 0;">
+          <div class="rounded-4 shadow-sm p-4 h-100 position-relative input-panel mx-auto"
+            style="width: 100%; min-width: 0; max-width: 600px; height: 100%;">
+            <div class="position-relative" style="height: 100%;">
+              <textarea class="form-control h-100 rounded-3 border-0 shadow-none input-textarea" rows="12"
+                maxlength="5000" placeholder="Enter text" [(ngModel)]="inputText" (input)="onInput()" autocomplete="off"
+                style="min-height: 120px; max-height: 600px; font-size: 1.13rem; padding-left: 48px; padding-right: 48px; padding-bottom: 38px; height: auto; resize: vertical;"></textarea>
+              <span class="voice-input-icon position-absolute"
+                style="left: 12px; bottom: 12px; cursor: pointer; background: rgba(255,255,255,0.8); border-radius: 50%; padding: 4px; box-shadow: 0 2px 8px #e0e7ef55;">
+                <span class="material-icons mic-icon" style="font-size: 1.7rem; color: #6366f1;">mic</span>
+              </span>
+              <span class="handwriting-input-icon position-absolute"
+                style="right: 32px; bottom: 48px; cursor: pointer; background: rgba(255,255,255,0.8); border-radius: 50%; padding: 4px; box-shadow: 0 2px 8px #e0e7ef55;">
+                <span class="material-icons handwriting-icon" style="font-size: 1.5rem; color: #6366f1;">draw</span>
+              </span>
+              <small class="text-muted position-absolute input-counter"
+                style="bottom: 18px; right: 32px; background: rgba(255,255,255,0.7); padding: 0 6px; border-radius: 6px; font-size: 0.95em; pointer-events: none;">
+                {{inputText.length}} <span style="color:#bbb;">/ 5000</span>
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 d-flex justify-content-center"
+          style="flex: 1 1 0; min-width: 0; max-width: 600px; width: 0; padding: 0;">
+          <div
+            class="bg-light rounded-4 p-4 d-flex flex-column justify-content-between shadow-sm h-100 output-panel mx-auto"
+            style="width: 100%; min-width: 0; max-width: 600px; height: 100%;">
+            <div class="fs-5 fw-semibold mb-2 text-secondary"></div>
+            <textarea class="form-control h-100 rounded-3 border-0 shadow-none fs-5 text-break output-textarea"
+              rows="12" readonly placeholder="{{translatedText || 'Translation'}}"
+              style="min-height: 120px; max-height: 600px; font-size: 1.13rem; padding-left: 18px; padding-right: 18px; padding-bottom: 18px; background: transparent; resize: vertical; white-space: pre-wrap; height: auto;"></textarea>
+            <div class="text-end mt-3">
+              <button class="btn btn-link p-0 text-muted">Send feedback</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="my-5 divider"></div>
+
+      <!-- Footer buttons -->
+      <div class="d-flex justify-content-center gap-5 mt-4 user-select-none align-items-center mx-auto"
+        style="width: 100%; max-width: 100%;">
+        <button
+          class="btn btn-outline-secondary rounded-circle d-flex flex-column align-items-center px-3 py-3 shadow-sm footer-btn"
+          style="width: 90px; height: 90px; background: rgba(255,255,255,0.7); border: 1px solid #e0e7ef; transition: box-shadow 0.2s;"
+          title="History">
+          <span class="fs-3 mb-1 material-icons footer-icon" style="font-size: 2rem;">history</span>
+          <small>History</small>
+        </button>
+        <button
+          class="btn btn-outline-secondary rounded-circle d-flex flex-column align-items-center px-3 py-3 shadow-sm footer-btn"
+          style="width: 90px; height: 90px; background: rgba(255,255,255,0.7); border: 1px solid #e0e7ef; transition: box-shadow 0.2s;"
+          title="Saved">
+          <span class="fs-3 mb-1 material-icons footer-icon" style="font-size: 2rem;">bookmark</span>
+          <small>Saved</small>
+        </button>
+      </div>
+    </div>
+
+          <!-- Footer -->
+    <div class="d-flex justify-content-center gap-5 mt-4 user-select-none align-items-center mx-auto">
+      <footer style="width:100%; text-align:center;">
+        &copy; <span style="color:#007aff;">2025 Joseph Khaipi</span><br />
+        <span class="footer-cred">Developer | B.CompSc, M.Data Science (Professional)</span>
+      </footer>
+    </div>
+  </div>
+</div>
